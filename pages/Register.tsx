@@ -3,6 +3,7 @@ import { Button } from '../components/Button';
 import { useAuth } from '../context/AuthContext';
 import { Page } from '../types';
 import { Eye, EyeOff, Lock, Phone, User, ArrowRight, MapPin } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 interface RegisterProps {
   onNavigate: (page: Page) => void;
@@ -17,15 +18,20 @@ export const Register: React.FC<RegisterProps> = ({ onNavigate }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate network delay
-    setTimeout(() => {
-      register(name, mobile, address);
-      setIsLoading(false);
-      onNavigate('HOME');
-    }, 1000);
+
+    // Removed email argument
+    const result = await register(name, mobile, password, address);
+    setIsLoading(false);
+
+    if (result.success) {
+        toast.success('Account created! Please log in.');
+        onNavigate('LOGIN');
+    } else {
+        toast.error(result.error || 'Registration failed.');
+    }
   };
 
   return (
@@ -63,7 +69,7 @@ export const Register: React.FC<RegisterProps> = ({ onNavigate }) => {
             </div>
 
             <div className="relative">
-                <label className="text-sm font-medium text-txt mb-1 block">Mobile Number</label>
+                <label className="text-sm font-medium text-txt mb-1 block">Mobile Number <span className="text-red-500">*</span></label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                     <Phone size={18} />
@@ -74,9 +80,10 @@ export const Register: React.FC<RegisterProps> = ({ onNavigate }) => {
                     value={mobile}
                     onChange={(e) => setMobile(e.target.value)}
                     className="block w-full pl-10 pr-3 py-2.5 bg-white border border-gray-300 rounded-lg text-txt placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all sm:text-sm"
-                    placeholder="+1 (555) 000-0000"
+                    placeholder="1234567890"
                   />
                 </div>
+                <p className="text-xs text-gray-400 mt-1">This will be your login ID.</p>
             </div>
 
              <div className="relative">
@@ -117,7 +124,7 @@ export const Register: React.FC<RegisterProps> = ({ onNavigate }) => {
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
-                <p className="mt-1 text-xs text-gray-500">Must be at least 8 characters.</p>
+                <p className="mt-1 text-xs text-gray-500">Must be at least 6 characters.</p>
             </div>
             
             <div className="flex items-center">

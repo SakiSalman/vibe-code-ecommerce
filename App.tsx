@@ -14,6 +14,7 @@ import { Footer } from './components/Footer';
 import { Page } from './types';
 import { CheckCircle } from 'lucide-react';
 import { Button } from './components/Button';
+import { Toaster } from 'react-hot-toast';
 
 // Wrapper component to provide context to the rest of the app
 const AppContent: React.FC = () => {
@@ -60,6 +61,7 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col font-sans text-txt bg-white">
+      <Toaster position="top-center" reverseOrder={false} />
       <Header onNavigate={navigateTo} currentPage={currentPage} />
       
       <main className="flex-grow pt-16">
